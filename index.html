@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <title>RSC Stream Control</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+  <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?2.4.6"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-transform/1.0.4/d3-transform.min.js" integrity="sha512-mxtQ5axoakkabgk9lnYJsaCL+BryRmZ4py80vqOf8UIbZhwc+m1bqmnge6Khd7sOLh2gPFCaKiynJEnqR79CaA==" crossorigin="anonymous"></script>
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css'>
+  <link rel="stylesheet" href="./style1.css">
+  
+</head>
+
+<body onload="load()">
+
+  <div class="sidenav">
+    <img class="back" src="assets/logos/RSC_SX.png" id="rscLogo" style="width: 175px; margin-top: -135px;" ></img>
+    <a>Game 1</a>
+    <select id="tier-dropdown" name="tier" onchange="teams()"></select>
+    <select id="blue-team" name="BlueTeam" onchange=""></select>
+    <select id="orange-team" name="OrangeTeam" onchange=""></select>
+    <br></br>
+    <a>Game 2</a>
+    <select id="tier-dropdown2" name="tier2" onchange="teams2()"></select>
+    <select id="blue-team2" name="BlueTeam2" onchange=""></select>
+    <select id="orange-team2" name="OrangeTeam2" onchange=""></select>
+    <br></br>
+    <button  onclick="live()" type="button" style="width: 200px; font-size: 15px; background-color: green; color: white; border: 2px solid green; padding: 3px;margin-top: 5px;">CREATE IMAGES</button>
+  </div>
+
+
+
+  <div class="main">
+<h5 >Pick Match-Ups On The Left</h5>
+<h6>If you cannot pick a Tier after 20 seconds please refresh the page</h6>
+<!--
+<select id="tier-dropdown" name="tier" onchange="teams()"></select><br>
+<select id="blue-team" name="BlueTeam" onchange=""></select>
+<select id="orange-team" name="OrangeTeam" onchange=""></select><br> -->
+<div></div>
+<br></br>
+<!-------------------------------------------------------------------->
+
+<div class="row center">
+  <div class="column">
+    <canvas id="VS1" width="1920" height="1080">
+    </canvas>
+    <br></br>
+    <canvas id="myCanvas" width="1920" height="1080">
+    </canvas>
+    <br></br>
+    <canvas id="TeamImage1" width="1920" height="1080">
+    </canvas>
+  </div>
+  <div class="column">
+    <canvas id="VS2" width="1920" height="1080">
+    </canvas>
+    <br></br>
+    <canvas id="myCanvas2" width="1920" height="1080">
+    </canvas>
+    <br></br>
+    <canvas id="TeamImage2" width="1920" height="1080">
+    </canvas>
+  </div>
+</div>
+<!--<canvas id="VS1" width="1920" height="1080">
+</canvas>
+<br></br>
+<canvas id="myCanvas" width="1920" height="1080">
+</canvas>
+<br></br>
+<canvas id="TeamImage1" width="1920" height="1080">
+</canvas>-->
+<img id="blueLogo" width="0" height="0" src= "assets/logos/Active Logos/Dino Park.png">
+<img id="orangeLogo" width="0" height="0" src= "assets/logos/Active Logos/Dino Park.png">
+<img id="blueLogo2" width="0" height="0" src= "assets/logos/Active Logos/Dino Park.png">
+<img id="orangeLogo2" width="0" height="0" src= "assets/logos/Active Logos/Dino Park.png">
+<img id="background" width="0" height="0" src= "assets/Season_X_Player.png">
+<img id="backgroundTS1" width="0" height="0" src= "assets/Season_X_Stats.png">
+<img id="backgroundVS1" width="0" height="0" src= "assets/VS.png">
+
+<script>
+
+
+function loadGame1() {
+        let blueF = localStorage.getItem("BlueFran")
+        
+        //document.getElementById("blueFranchise").innerHTML  = localStorage.getItem("BlueFran")
+        document.getElementById("blueLogo").src = "assets/logos/Active Logos/" + blueF + ".png";
+        
+        let blueF2 = localStorage.getItem("BlueFran2")
+        
+        //document.getElementById("blueFranchise").innerHTML  = localStorage.getItem("BlueFran")
+        document.getElementById("blueLogo2").src = "assets/logos/Active Logos/" + blueF2 + ".png";
+
+        
+        let orangeF = localStorage.getItem("OrangeFran")
+        document.getElementById("orangeLogo").src = "assets/logos/Active Logos/" + orangeF + ".png";
+
+        let orangeF2 = localStorage.getItem("OrangeFran2")
+        document.getElementById("orangeLogo2").src = "assets/logos/Active Logos/" + orangeF2 + ".png";
+
+
+        let Teams = localStorage.getItem("Teams")
+        let teamData = ('Teams: ', JSON.parse(Teams))
+
+        
+        //-----------------------------------------------------------------------------------------------------------//
+        var BlueResults = []
+var searchField = 'Franchise'
+var searchValue = blueF
+for (var i=0 ; i < teamData.Teams.length ; i++)
+{
+  if (teamData.Teams[i][searchField] == searchValue) {
+    BlueResults.push(teamData.Teams[i])
+  }
+}
+//console.log(BlueResults[0].Players[0])
+
+var OrangeResults = []
+var searchFieldO = 'Franchise'
+var searchValueO = orangeF
+for (var i=0 ; i < teamData.Teams.length ; i++)
+{
+  if (teamData.Teams[i][searchFieldO] == searchValueO) {
+    OrangeResults.push(teamData.Teams[i])
+  }
+}
+//console.log(OrangeResults)
+
+if (BlueResults[0].Players.length < 4){
+var Blue1Name = BlueResults[0].Players[0].PlayerName
+var Blue2Name = BlueResults[0].Players[1].PlayerName
+var Blue3Name = BlueResults[0].Players[2].PlayerName
+var Blue4Name = ""
+var Blue1GP = BlueResults[0].Players[0].GP
+var Blue2GP = BlueResults[0].Players[1].GP
+var Blue3GP = BlueResults[0].Players[2].GP
+var Blue4GP = ""
+var Blue1Goals = BlueResults[0].Players[0].Goals
+var Blue2Goals = BlueResults[0].Players[1].Goals
+var Blue3Goals = BlueResults[0].Players[2].Goals
+var Blue4Goals = ""
+var Blue1Assists = BlueResults[0].Players[0].Assists
+var Blue2Assists = BlueResults[0].Players[1].Assists
+var Blue3Assists = BlueResults[0].Players[2].Assists
+var Blue4Assists = ""
+var Blue1Saves = BlueResults[0].Players[0].Saves
+var Blue2Saves = BlueResults[0].Players[1].Saves
+var Blue3Saves = BlueResults[0].Players[2].Saves
+var Blue4Saves = ""
+var Blue1ShotPct = BlueResults[0].Players[0].ShotPct
+var Blue2ShotPct = BlueResults[0].Players[1].ShotPct
+var Blue3ShotPct = BlueResults[0].Players[2].ShotPct
+var Blue4ShotPct = ""
+}else{
+var Blue1Name = BlueResults[0].Players[0].PlayerName
+var Blue2Name = BlueResults[0].Players[1].PlayerName
+var Blue3Name = BlueResults[0].Players[2].PlayerName
+var Blue4Name = BlueResults[0].Players[3].PlayerName
+var Blue1GP = BlueResults[0].Players[0].GP
+var Blue2GP = BlueResults[0].Players[1].GP
+var Blue3GP = BlueResults[0].Players[2].GP
+var Blue4GP = BlueResults[0].Players[3].GP
+var Blue1Goals = BlueResults[0].Players[0].Goals
+var Blue2Goals = BlueResults[0].Players[1].Goals
+var Blue3Goals = BlueResults[0].Players[2].Goals
+var Blue4Goals = BlueResults[0].Players[3].Goals
+var Blue1Assists = BlueResults[0].Players[0].Assists
+var Blue2Assists = BlueResults[0].Players[1].Assists
+var Blue3Assists = BlueResults[0].Players[2].Assists
+var Blue4Assists = BlueResults[0].Players[3].Assists
+var Blue1Saves = BlueResults[0].Players[0].Saves
+var Blue2Saves = BlueResults[0].Players[1].Saves
+var Blue3Saves = BlueResults[0].Players[2].Saves
+var Blue4Saves = BlueResults[0].Players[3].Saves
+var Blue1ShotPct = BlueResults[0].Players[0].ShotPct
+var Blue2ShotPct = BlueResults[0].Players[1].ShotPct
+var Blue3ShotPct = BlueResults[0].Players[2].ShotPct
+var Blue4ShotPct = BlueResults[0].Players[3].ShotPct
+console.log(Blue1Name)
+}
+
+
+if (OrangeResults[0].Players.length < 4){
+var Orange1Name = OrangeResults[0].Players[0].PlayerName
+var Orange2Name = OrangeResults[0].Players[1].PlayerName
+var Orange3Name = OrangeResults[0].Players[2].PlayerName
+var Orange4Name = ""
+var Orange1GP = OrangeResults[0].Players[0].GP
+var Orange2GP = OrangeResults[0].Players[1].GP
+var Orange3GP = OrangeResults[0].Players[2].GP
+var Orange4GP = ""
+var Orange1Goals = OrangeResults[0].Players[0].Goals
+var Orange2Goals = OrangeResults[0].Players[1].Goals
+var Orange3Goals = OrangeResults[0].Players[2].Goals
+var Orange4Goals = ""
+var Orange1Assists = OrangeResults[0].Players[0].Assists
+var Orange2Assists = OrangeResults[0].Players[1].Assists
+var Orange3Assists = OrangeResults[0].Players[2].Assists
+var Orange4Assists = ""
+var Orange1Saves = OrangeResults[0].Players[0].Saves
+var Orange2Saves = OrangeResults[0].Players[1].Saves
+var Orange3Saves = OrangeResults[0].Players[2].Saves
+var Orange4Saves = ""
+var Orange1ShotPct = OrangeResults[0].Players[0].ShotPct
+var Orange2ShotPct = OrangeResults[0].Players[1].ShotPct
+var Orange3ShotPct = OrangeResults[0].Players[2].ShotPct
+var Orange4ShotPct = ""
+}else{
+var Orange1Name = OrangeResults[0].Players[0].PlayerName
+var Orange2Name = OrangeResults[0].Players[1].PlayerName
+var Orange3Name = OrangeResults[0].Players[2].PlayerName
+var Orange4Name = OrangeResults[0].Players[3].PlayerName
+var Orange1GP = OrangeResults[0].Players[0].GP
+var Orange2GP = OrangeResults[0].Players[1].GP
+var Orange3GP = OrangeResults[0].Players[2].GP
+var Orange4GP = OrangeResults[0].Players[3].GP
+var Orange1Goals = OrangeResults[0].Players[0].Goals
+var Orange2Goals = OrangeResults[0].Players[1].Goals
+var Orange3Goals = OrangeResults[0].Players[2].Goals
+var Orange4Goals = OrangeResults[0].Players[3].Goals
+var Orange1Assists = OrangeResults[0].Players[0].Assists
+var Orange2Assists = OrangeResults[0].Players[1].Assists
+var Orange3Assists = OrangeResults[0].Players[2].Assists
+var Orange4Assists = OrangeResults[0].Players[3].Assists
+var Orange1Saves = OrangeResults[0].Players[0].Saves
+var Orange2Saves = OrangeResults[0].Players[1].Saves
+var Orange3Saves = OrangeResults[0].Players[2].Saves
+var Orange4Saves = OrangeResults[0].Players[3].Saves
+var Orange1ShotPct = OrangeResults[0].Players[0].ShotPct
+var Orange2ShotPct = OrangeResults[0].Players[1].ShotPct
+var Orange3ShotPct = OrangeResults[0].Players[2].ShotPct
+var Orange4ShotPct = OrangeResults[0].Players[3].ShotPct
+}
+
+var BlueWins = BlueResults[0].Wins
+var BlueLosses = BlueResults[0].Loss
+var BlueGF = BlueResults[0].Goals
+var BlueGA = BlueResults[0].OppGoals
+var BlueSaves = BlueResults[0].Saves
+var BlueSA = BlueResults[0].OppSaves
+var BlueSP = BlueResults[0].ShotPct
+
+var OrangeWins = OrangeResults[0].Wins
+var OrangeLosses = OrangeResults[0].Loss
+var OrangeGF = OrangeResults[0].Goals
+var OrangeGA = OrangeResults[0].OppGoals
+var OrangeSaves = OrangeResults[0].Saves
+var OrangeSA = OrangeResults[0].OppSaves
+var OrangeSP = OrangeResults[0].ShotPct
+
+//-----------------------------------GAME 2 DATA-----------------------------------------------------------------//
+let Teams2 = localStorage.getItem("Teams2")
+let teamData2 = ('Teams2: ', JSON.parse(Teams2))
+
+var BlueResults2 = []
+var searchField2 = 'Franchise'
+var searchValue2 = blueF2
+console.log(teamData2)
+for (var i=0 ; i < teamData2.Teams.length ; i++)
+{
+  if (teamData2.Teams[i][searchField2] == searchValue2) {
+    BlueResults2.push(teamData2.Teams[i])
+  }
+}
+console.log(BlueResults2[0].Players[0])
+
+var OrangeResults2 = []
+var searchFieldO2 = 'Franchise'
+var searchValueO2 = orangeF2
+for (var i=0 ; i < teamData2.Teams.length ; i++)
+{
+  if (teamData2.Teams[i][searchFieldO2] == searchValueO2) {
+    OrangeResults2.push(teamData2.Teams[i])
+  }
+}
+console.log(OrangeResults2)
+
+if (BlueResults2[0].Players.length < 4){
+var Blue1Name2 = BlueResults2[0].Players[0].PlayerName
+var Blue2Name2 = BlueResults2[0].Players[1].PlayerName
+var Blue3Name2 = BlueResults2[0].Players[2].PlayerName
+var Blue4Name2 = ""
+var Blue1GP2 = BlueResults2[0].Players[0].GP
+var Blue2GP2 = BlueResults2[0].Players[1].GP
+var Blue3GP2 = BlueResults2[0].Players[2].GP
+var Blue4GP2 = ""
+var Blue1Goals2 = BlueResults2[0].Players[0].Goals
+var Blue2Goals2 = BlueResults2[0].Players[1].Goals
+var Blue3Goals2 = BlueResults2[0].Players[2].Goals
+var Blue4Goals2 = ""
+var Blue1Assists2 = BlueResults2[0].Players[0].Assists
+var Blue2Assists2 = BlueResults2[0].Players[1].Assists
+var Blue3Assists2 = BlueResults2[0].Players[2].Assists
+var Blue4Assists2 = ""
+var Blue1Saves2 = BlueResults2[0].Players[0].Saves
+var Blue2Saves2 = BlueResults2[0].Players[1].Saves
+var Blue3Saves2 = BlueResults2[0].Players[2].Saves
+var Blue4Saves2 = ""
+var Blue1ShotPct2 = BlueResults2[0].Players[0].ShotPct
+var Blue2ShotPct2 = BlueResults2[0].Players[1].ShotPct
+var Blue3ShotPct2 = BlueResults2[0].Players[2].ShotPct
+var Blue4ShotPct2 = ""
+}else{
+var Blue1Name2 = BlueResults2[0].Players[0].PlayerName
+var Blue2Name2 = BlueResults2[0].Players[1].PlayerName
+var Blue3Name2 = BlueResults2[0].Players[2].PlayerName
+var Blue4Name2 = BlueResults2[0].Players[3].PlayerName
+var Blue1GP2 = BlueResults2[0].Players[0].GP
+var Blue2GP2 = BlueResults2[0].Players[1].GP
+var Blue3GP2 = BlueResults2[0].Players[2].GP
+var Blue4GP2 = BlueResults2[0].Players[3].GP
+var Blue1Goals2 = BlueResults2[0].Players[0].Goals
+var Blue2Goals2 = BlueResults2[0].Players[1].Goals
+var Blue3Goals2 = BlueResults2[0].Players[2].Goals
+var Blue4Goals2 = BlueResults2[0].Players[3].Goals
+var Blue1Assists2 = BlueResults2[0].Players[0].Assists
+var Blue2Assists2 = BlueResults2[0].Players[1].Assists
+var Blue3Assists2 = BlueResults2[0].Players[2].Assists
+var Blue4Assists2 = BlueResults2[0].Players[3].Assists
+var Blue1Saves2 = BlueResults2[0].Players[0].Saves
+var Blue2Saves2 = BlueResults2[0].Players[1].Saves
+var Blue3Saves2 = BlueResults2[0].Players[2].Saves
+var Blue4Saves2 = BlueResults2[0].Players[3].Saves
+var Blue1ShotPct2 = BlueResults2[0].Players[0].ShotPct
+var Blue2ShotPct2 = BlueResults2[0].Players[1].ShotPct
+var Blue3ShotPct2 = BlueResults2[0].Players[2].ShotPct
+var Blue4ShotPct2 = BlueResults2[0].Players[3].ShotPct
+console.log(Blue1Name2)
+}
+
+
+if (OrangeResults2[0].Players.length < 4){
+var Orange1Name2 = OrangeResults2[0].Players[0].PlayerName
+var Orange2Name2 = OrangeResults2[0].Players[1].PlayerName
+var Orange3Name2 = OrangeResults2[0].Players[2].PlayerName
+var Orange4Name2 = ""
+var Orange1GP2 = OrangeResults2[0].Players[0].GP
+var Orange2GP2 = OrangeResults2[0].Players[1].GP
+var Orange3GP2 = OrangeResults2[0].Players[2].GP
+var Orange4GP2 = ""
+var Orange1Goals2 = OrangeResults2[0].Players[0].Goals
+var Orange2Goals2 = OrangeResults2[0].Players[1].Goals
+var Orange3Goals2 = OrangeResults2[0].Players[2].Goals
+var Orange4Goals2 = ""
+var Orange1Assists2 = OrangeResults2[0].Players[0].Assists
+var Orange2Assists2 = OrangeResults2[0].Players[1].Assists
+var Orange3Assists2 = OrangeResults2[0].Players[2].Assists
+var Orange4Assists2 = ""
+var Orange1Saves2 = OrangeResults2[0].Players[0].Saves
+var Orange2Saves2 = OrangeResults2[0].Players[1].Saves
+var Orange3Saves2 = OrangeResults2[0].Players[2].Saves
+var Orange4Saves2 = ""
+var Orange1ShotPct2 = OrangeResults2[0].Players[0].ShotPct
+var Orange2ShotPct2 = OrangeResults2[0].Players[1].ShotPct
+var Orange3ShotPct2 = OrangeResults2[0].Players[2].ShotPct
+var Orange4ShotPct2 = ""
+}else{
+var Orange1Name2 = OrangeResults2[0].Players[0].PlayerName
+var Orange2Name2 = OrangeResults2[0].Players[1].PlayerName
+var Orange3Name2 = OrangeResults2[0].Players[2].PlayerName
+var Orange4Name2 = OrangeResults2[0].Players[3].PlayerName
+var Orange1GP2 = OrangeResults2[0].Players[0].GP
+var Orange2GP2 = OrangeResults2[0].Players[1].GP
+var Orange3GP2 = OrangeResults2[0].Players[2].GP
+var Orange4GP2 = OrangeResults2[0].Players[3].GP
+var Orange1Goals2 = OrangeResults2[0].Players[0].Goals
+var Orange2Goals2 = OrangeResults2[0].Players[1].Goals
+var Orange3Goals2 = OrangeResults2[0].Players[2].Goals
+var Orange4Goals2 = OrangeResults2[0].Players[3].Goals
+var Orange1Assists2 = OrangeResults2[0].Players[0].Assists
+var Orange2Assists2 = OrangeResults2[0].Players[1].Assists
+var Orange3Assists2 = OrangeResults2[0].Players[2].Assists
+var Orange4Assists2 = OrangeResults2[0].Players[3].Assists
+var Orange1Saves2 = OrangeResults2[0].Players[0].Saves
+var Orange2Saves2 = OrangeResults2[0].Players[1].Saves
+var Orange3Saves2 = OrangeResults2[0].Players[2].Saves
+var Orange4Saves2 = OrangeResults2[0].Players[3].Saves
+var Orange1ShotPct2 = OrangeResults2[0].Players[0].ShotPct
+var Orange2ShotPct2 = OrangeResults2[0].Players[1].ShotPct
+var Orange3ShotPct2 = OrangeResults2[0].Players[2].ShotPct
+var Orange4ShotPct2 = OrangeResults2[0].Players[3].ShotPct
+}
+
+var BlueWins2 = BlueResults2[0].Wins
+var BlueLosses2 = BlueResults2[0].Loss
+var BlueGF2 = BlueResults2[0].Goals
+var BlueGA2 = BlueResults2[0].OppGoals
+var BlueSaves2 = BlueResults2[0].Saves
+var BlueSA2 = BlueResults2[0].OppSaves
+var BlueSP2 = BlueResults2[0].ShotPct
+
+var OrangeWins2 = OrangeResults2[0].Wins
+var OrangeLosses2 = OrangeResults2[0].Loss
+var OrangeGF2 = OrangeResults2[0].Goals
+var OrangeGA2 = OrangeResults2[0].OppGoals
+var OrangeSaves2 = OrangeResults2[0].Saves
+var OrangeSA2 = OrangeResults2[0].OppSaves
+var OrangeSP2 = OrangeResults2[0].ShotPct
+
+//---------------------------------------------------------------------------------------------------------------//
+setTimeout(()=>{
+          
+          
+//----------------------------PLAYERS STATS GAME 1--------------------------------------------------------------//
+  try {
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var Blue = document.getElementById("blueLogo");
+    var Orange = document.getElementById("orangeLogo");
+    var Background = document.getElementById("background");
+    ctx.drawImage(Background, 0, 0, 1920, 1080)
+    ctx.font = "40px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.fillText(Blue1Name, 730, 184)
+    ctx.fillText(Blue2Name, 730, 277)
+    ctx.fillText(Blue3Name, 730, 369)
+    ctx.fillText(Blue4Name, 730, 462)
+    ctx.fillText(Orange1Name, 55, 723)
+    ctx.fillText(Orange2Name, 55, 816)
+    ctx.fillText(Orange3Name, 55, 909)
+    ctx.fillText(Orange4Name, 55, 1002)
+    ctx.textAlign = 'center';
+    ctx.fillText(Blue1GP, 1235, 184)
+    ctx.fillText(Blue2GP, 1235, 277)
+    ctx.fillText(Blue3GP, 1235, 369)
+    ctx.fillText(Blue4GP, 1235, 462)
+    ctx.fillText(Orange1GP, 570, 723)
+    ctx.fillText(Orange2GP, 570, 816)
+    ctx.fillText(Orange3GP, 570, 909)
+    ctx.fillText(Orange4GP, 570, 1002)
+    ctx.fillText(Blue1Goals, 1358, 184)
+    ctx.fillText(Blue2Goals, 1358, 277)
+    ctx.fillText(Blue3Goals, 1358, 369)
+    ctx.fillText(Blue4Goals, 1358, 462)
+    ctx.fillText(Orange1Goals, 693, 723)
+    ctx.fillText(Orange2Goals, 693, 816)
+    ctx.fillText(Orange3Goals, 693, 909)
+    ctx.fillText(Orange4Goals, 693, 1002)
+    ctx.fillText(Blue1Assists, 1518, 184)
+    ctx.fillText(Blue2Assists, 1518, 277)
+    ctx.fillText(Blue3Assists, 1518, 369)
+    ctx.fillText(Blue4Assists, 1518, 462)
+    ctx.fillText(Orange1Assists, 853, 723)
+    ctx.fillText(Orange2Assists, 853, 816)
+    ctx.fillText(Orange3Assists, 853, 909)
+    ctx.fillText(Orange4Assists, 853, 1002)
+    ctx.fillText(Blue1Saves, 1676, 184)
+    ctx.fillText(Blue2Saves, 1676, 277)
+    ctx.fillText(Blue3Saves, 1676, 369)
+    ctx.fillText(Blue4Saves, 1676, 462)
+    ctx.fillText(Orange1Saves, 1011, 723)
+    ctx.fillText(Orange2Saves, 1011, 816)
+    ctx.fillText(Orange3Saves, 1011, 909)
+    ctx.fillText(Orange4Saves, 1011, 1002)
+    ctx.fillText(Blue1ShotPct, 1824, 184)
+    ctx.fillText(Blue2ShotPct, 1824, 277)
+    ctx.fillText(Blue3ShotPct, 1824, 369)
+    ctx.fillText(Blue4ShotPct, 1824, 462)
+    ctx.fillText(Orange1ShotPct, 1159, 723)
+    ctx.fillText(Orange2ShotPct, 1159, 816)
+    ctx.fillText(Orange3ShotPct, 1159, 909)
+    ctx.fillText(Orange4ShotPct, 1159, 1002)
+    ctx.font = "italic 35px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.textAlign = "right";
+    ctx.shadowColor="black";
+    ctx.shadowBlur=20;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
+    ctx.drawImage(Blue, 330, 35, 325, 325)
+    ctx.drawImage(Orange, 1270, 580, 325, 325)
+    ctx.fillText(localStorage.getItem("BlueFran"), 650, 517)
+    ctx.textAlign = "left"
+    ctx.fillText(localStorage.getItem("OrangeFran"), 1266, 1058)
+    ctx.font = "italic bold 55px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.textAlign = "right";
+    ctx.fillText(localStorage.getItem("BlueTeam"), 650, 470)
+    ctx.textAlign = "left"
+    ctx.fillText(localStorage.getItem("OrangeTeam"), 1266, 1011)
+    }
+    catch{
+      var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var Blue = document.getElementById("blueLogo");
+    var Orange = document.getElementById("orangeLogo");
+    var Background = document.getElementById("background");
+    ctx.drawImage(Background, 0, 0, 1920, 1080)
+    ctx.font = "40px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.fillText("Blue1Name", 730, 184)
+    ctx.fillText("Blue2Name", 730, 277)
+    ctx.fillText("Blue3Name", 730, 369)
+    ctx.fillText("Blue4Name", 730, 462)
+    ctx.fillText("Orange1Name", 55, 723)
+    ctx.fillText("Orange2Name", 55, 816)
+    ctx.fillText("Orange3Name", 55, 909)
+    ctx.fillText("Orange4Name", 55, 1002)
+    ctx.textAlign = 'center';
+    ctx.fillText("Blue1GP", 1235, 184)
+    ctx.fillText("Blue2GP", 1235, 277)
+    ctx.fillText("Blue3GP", 1235, 369)
+    ctx.fillText("Blue4GP", 1235, 462)
+    ctx.fillText("Orange1GP", 570, 723)
+    ctx.fillText("Orange2GP", 570, 816)
+    ctx.fillText("Orange3GP", 570, 909)
+    ctx.fillText("Orange4GP", 570, 1002)
+    ctx.fillText("Blue1Goals", 1358, 184)
+    ctx.fillText("Blue2Goals", 1358, 277)
+    ctx.fillText("Blue3Goals", 1358, 369)
+    ctx.fillText("Blue4Goals", 1358, 462)
+    ctx.fillText("Orange1Goals", 693, 723)
+    ctx.fillText("Orange2Goals", 693, 816)
+    ctx.fillText("Orange3Goals", 693, 909)
+    ctx.fillText("Orange4Goals", 693, 1002)
+    ctx.fillText("Blue1Assists", 1518, 184)
+    ctx.fillText("Blue2Assists", 1518, 277)
+    ctx.fillText("Blue3Assists", 1518, 369)
+    ctx.fillText("Blue4Assists", 1518, 462)
+    ctx.fillText("Orange1Assists", 853, 723)
+    ctx.fillText("Orange2Assists", 853, 816)
+    ctx.fillText("Orange3Assists", 853, 909)
+    ctx.fillText("Orange4Assists", 853, 1002)
+    ctx.fillText("Blue1Saves", 1676, 184)
+    ctx.fillText("Blue2Saves", 1676, 277)
+    ctx.fillText("Blue3Saves", 1676, 369)
+    ctx.fillText("Blue4Saves", 1676, 462)
+    ctx.fillText("Orange1Saves", 1011, 723)
+    ctx.fillText("Orange2Saves", 1011, 816)
+    ctx.fillText("Orange3Saves", 1011, 909)
+    ctx.fillText("Orange4Saves", 1011, 1002)
+    ctx.fillText("Blue1ShotPct", 1824, 184)
+    ctx.fillText("Blue2ShotPct", 1824, 277)
+    ctx.fillText("Blue3ShotPct", 1824, 369)
+    ctx.fillText("Blue4ShotPct", 1824, 462)
+    ctx.fillText("Orange1ShotPct", 1159, 723)
+    ctx.fillText("Orange2ShotPct", 1159, 816)
+    ctx.fillText("Orange3ShotPct", 1159, 909)
+    ctx.fillText("Orange4ShotPct", 1159, 1002)
+    ctx.font = "italic 35px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.textAlign = "right";
+    ctx.shadowColor="black";
+    ctx.shadowBlur=20;
+    ctx.shadowOffsetX = 5;
+    ctx.shadowOffsetY = 5;
+    ctx.drawImage(Blue, 330, 35, 325, 325)
+    ctx.drawImage(Orange, 1270, 580, 325, 325)
+    ctx.fillText(localStorage.getItem("BlueFran"), 650, 517)
+    ctx.textAlign = "left"
+    ctx.fillText(localStorage.getItem("OrangeFran"), 1266, 1058)
+    ctx.font = "italic bold 55px Verdana";
+    ctx.fillStyle = "#f5f5f5";
+    ctx.textAlign = "right";
+    ctx.fillText(localStorage.getItem("BlueTeam"), 650, 470)
+    ctx.textAlign = "left"
+    ctx.fillText(localStorage.getItem("OrangeTeam"), 1266, 1011)
+    }
+
+//------------------------------------------------PLAYER STATS GAME 2------------------------------------------------//
+try {
+    var p = document.getElementById("myCanvas2");
+    var ptx = p.getContext("2d");
+    var Blue2 = document.getElementById("blueLogo2");
+    var Orange2 = document.getElementById("orangeLogo2");
+    var Background = document.getElementById("background");
+    ptx.drawImage(Background, 0, 0, 1920, 1080)
+    ptx.font = "40px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.fillText(Blue1Name2, 730, 184)
+    ptx.fillText(Blue2Name2, 730, 277)
+    ptx.fillText(Blue3Name2, 730, 369)
+    ptx.fillText(Blue4Name2, 730, 462)
+    ptx.fillText(Orange1Name2, 55, 723)
+    ptx.fillText(Orange2Name2, 55, 816)
+    ptx.fillText(Orange3Name2, 55, 909)
+    ptx.fillText(Orange4Name2, 55, 1002)
+    ptx.textAlign = 'center';
+    ptx.fillText(Blue1GP2, 1235, 184)
+    ptx.fillText(Blue2GP2, 1235, 277)
+    ptx.fillText(Blue3GP2, 1235, 369)
+    ptx.fillText(Blue4GP2, 1235, 462)
+    ptx.fillText(Orange1GP2, 570, 723)
+    ptx.fillText(Orange2GP2, 570, 816)
+    ptx.fillText(Orange3GP2, 570, 909)
+    ptx.fillText(Orange4GP2, 570, 1002)
+    ptx.fillText(Blue1Goals2, 1358, 184)
+    ptx.fillText(Blue2Goals2, 1358, 277)
+    ptx.fillText(Blue3Goals2, 1358, 369)
+    ptx.fillText(Blue4Goals2, 1358, 462)
+    ptx.fillText(Orange1Goals2, 693, 723)
+    ptx.fillText(Orange2Goals2, 693, 816)
+    ptx.fillText(Orange3Goals2, 693, 909)
+    ptx.fillText(Orange4Goals2, 693, 1002)
+    ptx.fillText(Blue1Assists2, 1518, 184)
+    ptx.fillText(Blue2Assists2, 1518, 277)
+    ptx.fillText(Blue3Assists2, 1518, 369)
+    ptx.fillText(Blue4Assists2, 1518, 462)
+    ptx.fillText(Orange1Assists2, 853, 723)
+    ptx.fillText(Orange2Assists2, 853, 816)
+    ptx.fillText(Orange3Assists2, 853, 909)
+    ptx.fillText(Orange4Assists2, 853, 1002)
+    ptx.fillText(Blue1Saves2, 1676, 184)
+    ptx.fillText(Blue2Saves2, 1676, 277)
+    ptx.fillText(Blue3Saves2, 1676, 369)
+    ptx.fillText(Blue4Saves2, 1676, 462)
+    ptx.fillText(Orange1Saves2, 1011, 723)
+    ptx.fillText(Orange2Saves2, 1011, 816)
+    ptx.fillText(Orange3Saves2, 1011, 909)
+    ptx.fillText(Orange4Saves2, 1011, 1002)
+    ptx.fillText(Blue1ShotPct2, 1824, 184)
+    ptx.fillText(Blue2ShotPct2, 1824, 277)
+    ptx.fillText(Blue3ShotPct2, 1824, 369)
+    ptx.fillText(Blue4ShotPct2, 1824, 462)
+    ptx.fillText(Orange1ShotPct2, 1159, 723)
+    ptx.fillText(Orange2ShotPct2, 1159, 816)
+    ptx.fillText(Orange3ShotPct2, 1159, 909)
+    ptx.fillText(Orange4ShotPct2, 1159, 1002)
+    ptx.font = "italic 35px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.textAlign = "right";
+    ptx.shadowColor="black";
+    ptx.shadowBlur=20;
+    ptx.shadowOffsetX = 5;
+    ptx.shadowOffsetY = 5;
+    ptx.drawImage(Blue2, 330, 35, 325, 325)
+    ptx.drawImage(Orange2, 1270, 580, 325, 325)
+    ptx.fillText(localStorage.getItem("BlueFran2"), 650, 517)
+    ptx.textAlign = "left"
+    ptx.fillText(localStorage.getItem("OrangeFran2"), 1266, 1058)
+    ptx.font = "italic bold 55px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.textAlign = "right";
+    ptx.fillText(localStorage.getItem("BlueTeam2"), 650, 470)
+    ptx.textAlign = "left"
+    ptx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 1011)
+    }
+    catch{
+      var p = document.getElementById("myCanvas2");
+    var ptx = p.getContext("2d");
+    var Blue = document.getElementById("blueLogo2");
+    var Orange = document.getElementById("orangeLogo2");
+    var Background = document.getElementById("background");
+    ptx.drawImage(Background, 0, 0, 1920, 1080)
+    ptx.font = "40px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.fillText("Blue1Name", 730, 184)
+    ptx.fillText("Blue2Name", 730, 277)
+    ptx.fillText("Blue3Name", 730, 369)
+    ptx.fillText("Blue4Name", 730, 462)
+    ptx.fillText("Orange1Name", 55, 723)
+    ptx.fillText("Orange2Name", 55, 816)
+    ptx.fillText("Orange3Name", 55, 909)
+    ptx.fillText("Orange4Name", 55, 1002)
+    ptx.textAlign = 'center';
+    ptx.fillText("Blue1GP", 1235, 184)
+    ptx.fillText("Blue2GP", 1235, 277)
+    ptx.fillText("Blue3GP", 1235, 369)
+    ptx.fillText("Blue4GP", 1235, 462)
+    ptx.fillText("Orange1GP", 570, 723)
+    ptx.fillText("Orange2GP", 570, 816)
+    ptx.fillText("Orange3GP", 570, 909)
+    ptx.fillText("Orange4GP", 570, 1002)
+    ptx.fillText("Blue1Goals", 1358, 184)
+    ptx.fillText("Blue2Goals", 1358, 277)
+    ptx.fillText("Blue3Goals", 1358, 369)
+    ptx.fillText("Blue4Goals", 1358, 462)
+    ptx.fillText("Orange1Goals", 693, 723)
+    ptx.fillText("Orange2Goals", 693, 816)
+    ptx.fillText("Orange3Goals", 693, 909)
+    ptx.fillText("Orange4Goals", 693, 1002)
+    ptx.fillText("Blue1Assists", 1518, 184)
+    ptx.fillText("Blue2Assists", 1518, 277)
+    ptx.fillText("Blue3Assists", 1518, 369)
+    ptx.fillText("Blue4Assists", 1518, 462)
+    ptx.fillText("Orange1Assists", 853, 723)
+    ptx.fillText("Orange2Assists", 853, 816)
+    ptx.fillText("Orange3Assists", 853, 909)
+    ptx.fillText("Orange4Assists", 853, 1002)
+    ptx.fillText("Blue1Saves", 1676, 184)
+    ptx.fillText("Blue2Saves", 1676, 277)
+    ptx.fillText("Blue3Saves", 1676, 369)
+    ptx.fillText("Blue4Saves", 1676, 462)
+    ptx.fillText("Orange1Saves", 1011, 723)
+    ptx.fillText("Orange2Saves", 1011, 816)
+    ptx.fillText("Orange3Saves", 1011, 909)
+    ptx.fillText("Orange4Saves", 1011, 1002)
+    ptx.fillText("Blue1ShotPct", 1824, 184)
+    ptx.fillText("Blue2ShotPct", 1824, 277)
+    ptx.fillText("Blue3ShotPct", 1824, 369)
+    ptx.fillText("Blue4ShotPct", 1824, 462)
+    ptx.fillText("Orange1ShotPct", 1159, 723)
+    ptx.fillText("Orange2ShotPct", 1159, 816)
+    ptx.fillText("Orange3ShotPct", 1159, 909)
+    ptx.fillText("Orange4ShotPct", 1159, 1002)
+    ptx.font = "italic 35px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.textAlign = "right";
+    ptx.shadowColor="black";
+    ptx.shadowBlur=20;
+    ptx.shadowOffsetX = 5;
+    ptx.shadowOffsetY = 5;
+    ptx.drawImage(Blue, 330, 35, 325, 325)
+    ptx.drawImage(Orange, 1270, 580, 325, 325)
+    ptx.fillText(localStorage.getItem("BlueFran2"), 650, 517)
+    ptx.textAlign = "left"
+    ptx.fillText(localStorage.getItem("OrangeFran2"), 1266, 1058)
+    ptx.font = "italic bold 55px Verdana";
+    ptx.fillStyle = "#f5f5f5";
+    ptx.textAlign = "right";
+    ptx.fillText(localStorage.getItem("BlueTeam2"), 650, 470)
+    ptx.textAlign = "left"
+    ptx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 1011)
+    } 
+//------------------------------------------------TEAM STATS GAME 1-------------------------------------------------//
+        var t = document.getElementById("TeamImage1");
+        var titx = t.getContext("2d");
+        var Blue = document.getElementById("blueLogo");
+        var Orange = document.getElementById("orangeLogo");
+        var Background = document.getElementById("backgroundTS1");
+        titx.drawImage(Background, 0, 0, 1920, 1080)
+        titx.font = "45px Verdana";
+        titx.fillStyle = "#f5f5f5";
+        titx.textAlign = 'center';
+        titx.fillText(BlueWins, 755, 350)
+        titx.fillText(BlueLosses, 755, 433)
+        titx.fillText(BlueGF, 755, 516)
+        titx.fillText(BlueGA, 755, 600)
+        titx.fillText(BlueSaves, 755, 683)
+        titx.fillText(BlueSA, 755, 768)
+        titx.fillText(Number(BlueSP).toFixed(1), 755, 847)
+        titx.fillText(OrangeWins, 1165, 350)
+        titx.fillText(OrangeLosses, 1165, 433)
+        titx.fillText(OrangeGF, 1165, 516)
+        titx.fillText(OrangeGA, 1165, 600)
+        titx.fillText(OrangeSaves, 1165, 683)
+        titx.fillText(OrangeSA, 1165, 768)
+        titx.fillText(Number(OrangeSP).toFixed(1), 1165, 847)
+        titx.font = "italic 35px Verdana";
+        titx.fillStyle = "#f5f5f5";
+        titx.textAlign = "right";
+        titx.shadowColor="black";
+        titx.shadowBlur=20;
+        titx.shadowOffsetX = 5;
+        titx.shadowOffsetY = 5;
+        titx.drawImage(Blue, 330, 328, 325, 325)
+        titx.drawImage(Orange, 1270, 328, 325, 325)
+        titx.fillText(localStorage.getItem("BlueFran"), 650, 847)
+        titx.textAlign = "left"
+        titx.fillText(localStorage.getItem("OrangeFran"), 1266, 847)
+        titx.font = "italic bold 55px Verdana";
+        titx.fillStyle = "#f5f5f5";
+        titx.textAlign = "right";
+        titx.fillText(localStorage.getItem("BlueTeam"), 650, 800)
+        titx.textAlign = "left"
+        titx.fillText(localStorage.getItem("OrangeTeam"), 1266, 800)
+
+        //------------------------------------------------TEAM STATS GAME 2-------------------------------------------------//
+        var t2 = document.getElementById("TeamImage2");
+        var ti2tx = t2.getContext("2d");
+        var Blue2 = document.getElementById("blueLogo2");
+        var Orange2 = document.getElementById("orangeLogo2");
+        var Background = document.getElementById("backgroundTS1");
+        ti2tx.drawImage(Background, 0, 0, 1920, 1080)
+        ti2tx.font = "45px Verdana";
+        ti2tx.fillStyle = "#f5f5f5";
+        ti2tx.textAlign = 'center';
+        ti2tx.fillText(BlueWins2, 755, 350)
+        ti2tx.fillText(BlueLosses2, 755, 433)
+        ti2tx.fillText(BlueGF2, 755, 516)
+        ti2tx.fillText(BlueGA2, 755, 600)
+        ti2tx.fillText(BlueSaves2, 755, 683)
+        ti2tx.fillText(BlueSA2, 755, 768)
+        ti2tx.fillText(Number(BlueSP2).toFixed(1), 755, 847)
+        ti2tx.fillText(OrangeWins2, 1165, 350)
+        ti2tx.fillText(OrangeLosses2, 1165, 433)
+        ti2tx.fillText(OrangeGF2, 1165, 516)
+        ti2tx.fillText(OrangeGA2, 1165, 600)
+        ti2tx.fillText(OrangeSaves2, 1165, 683)
+        ti2tx.fillText(OrangeSA2, 1165, 768)
+        ti2tx.fillText(Number(OrangeSP2).toFixed(1), 1165, 847)
+        ti2tx.font = "italic 35px Verdana";
+        ti2tx.fillStyle = "#f5f5f5";
+        ti2tx.textAlign = "right";
+        ti2tx.shadowColor="black";
+        ti2tx.shadowBlur=20;
+        ti2tx.shadowOffsetX = 5;
+        ti2tx.shadowOffsetY = 5;
+        ti2tx.drawImage(Blue2, 330, 328, 325, 325)
+        ti2tx.drawImage(Orange2, 1270, 328, 325, 325)
+        ti2tx.fillText(localStorage.getItem("BlueFran2"), 650, 847)
+        ti2tx.textAlign = "left"
+        ti2tx.fillText(localStorage.getItem("OrangeFran2"), 1266, 847)
+        ti2tx.font = "italic bold 55px Verdana";
+        ti2tx.fillStyle = "#f5f5f5";
+        ti2tx.textAlign = "right";
+        ti2tx.fillText(localStorage.getItem("BlueTeam2"), 650, 800)
+        ti2tx.textAlign = "left"
+        ti2tx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 800)
+
+//-----------------------------------------VS GAME 1---------------------------------------------------------//
+        var v = document.getElementById("VS1");
+        var vs1tx = v.getContext("2d");
+        var Blue = document.getElementById("blueLogo");
+        var Orange = document.getElementById("orangeLogo");
+        var Background = document.getElementById("backgroundVS1");
+        vs1tx.drawImage(Background, 0, 0, 1920, 1080)
+        vs1tx.font = "60px Verdana";
+        vs1tx.fillStyle = "#f5f5f5";
+        vs1tx.textAlign = 'center';
+        vs1tx.fillText(localStorage.getItem("tier"), 960, 900)
+        vs1tx.font = "italic 35px Verdana";
+        vs1tx.fillStyle = "#f5f5f5";
+        vs1tx.textAlign = "right";
+        vs1tx.shadowColor="black";
+        vs1tx.shadowBlur=20;
+        vs1tx.shadowOffsetX = 5;
+        vs1tx.shadowOffsetY = 5;
+        vs1tx.drawImage(Blue, 200, 500, 425, 425)
+        vs1tx.drawImage(Orange, 1272, 500, 425, 425)
+        vs1tx.textAlign = "left"
+        vs1tx.font = "italic bold 55px Verdana";
+        vs1tx.fillStyle = "#f5f5f5";
+        vs1tx.textAlign = "center";
+        vs1tx.fillText(localStorage.getItem("BlueTeam"), 412, 1005)
+        vs1tx.textAlign = "center"
+        vs1tx.fillText(localStorage.getItem("OrangeTeam"), 1485, 1005)
+
+//------------------------------------------------VS GAME 2-----------------------------------------------------------------//        
+        var v2 = document.getElementById("VS2");
+        var vs2tx = v2.getContext("2d");
+        var Blue2 = document.getElementById("blueLogo2");
+        var Orange2 = document.getElementById("orangeLogo2");
+        var Background2 = document.getElementById("backgroundVS1");
+        vs2tx.drawImage(Background2, 0, 0, 1920, 1080)
+        vs2tx.font = "60px Verdana";
+        vs2tx.fillStyle = "#f5f5f5";
+        vs2tx.textAlign = 'center';
+        vs2tx.fillText(localStorage.getItem("tier2"), 960, 900)
+        vs2tx.font = "italic 35px Verdana";
+        vs2tx.fillStyle = "#f5f5f5";
+        vs2tx.textAlign = "right";
+        vs2tx.shadowColor="black";
+        vs2tx.shadowBlur=20;
+        vs2tx.shadowOffsetX = 5;
+        vs2tx.shadowOffsetY = 5;
+        vs2tx.drawImage(Blue2, 200, 500, 425, 425)
+        vs2tx.drawImage(Orange2, 1272, 500, 425, 425)
+        //vs2tx.fillText(localStorage.getItem("BlueFran"), 655, 517)
+        vs2tx.textAlign = "left"
+        //vs2tx.fillText(localStorage.getItem("OrangeFran"), 1261, 1058)
+        vs2tx.font = "italic bold 55px Verdana";
+        vs2tx.fillStyle = "#f5f5f5";
+        vs2tx.textAlign = "center";
+        vs2tx.fillText(localStorage.getItem("BlueTeam2"), 412, 1005)
+        vs2tx.textAlign = "center"
+        vs2tx.fillText(localStorage.getItem("OrangeTeam2"), 1485, 1005)
+  }, 500) 
+
+      }
+
+      function live() {
+  
+  var sel = document.getElementById("blue-team");
+      var bt= sel.options[sel.selectedIndex].label;
+      var bf= sel.options[sel.selectedIndex].value;
+      //var plb= sel.options[sel.selectedIndex].players;
+      //console.log(plb)
+      localStorage.setItem("BlueTeam", bt);
+      localStorage.setItem("BlueFran", bf);
+      //localStorage.setItem("BluePlayers", plb);
+
+    
+    var sel1 = document.getElementById("orange-team");
+      var ot= sel1.options[sel1.selectedIndex].label;
+      var of= sel1.options[sel1.selectedIndex].value;
+      //console.log(of)
+      localStorage.setItem("OrangeTeam", ot);
+      localStorage.setItem("OrangeFran", of);
+
+      localStorage.setItem("tier", document.getElementById("tier-dropdown").value);
+
+     var selB2 = document.getElementById("blue-team2");
+      var bt2= selB2.options[selB2.selectedIndex].label;
+      var bf2= selB2.options[selB2.selectedIndex].value;
+      //var plb= sel.options[sel.selectedIndex].players;
+      //console.log(plb)
+      localStorage.setItem("BlueTeam2", bt2);
+      localStorage.setItem("BlueFran2", bf2);
+      //localStorage.setItem("BluePlayers", plb);
+
+     
+    var sel12 = document.getElementById("orange-team2");
+      var ot2= sel12.options[sel12.selectedIndex].label;
+      var of2= sel12.options[sel12.selectedIndex].value;
+      //console.log(of)
+      localStorage.setItem("OrangeTeam2", ot2);
+      localStorage.setItem("OrangeFran2", of2);
+
+      localStorage.setItem("tier2", document.getElementById("tier-dropdown2").value);
+      
+      orangeTeamName();
+      blueTeamName();
+     
+     setTimeout(()=>{
+          myCanvas.width+=0;
+          TeamImage1.width+=0;
+          VS1.width+=0;
+          myCanvas2.width+=0;
+          TeamImage2.width+=0;
+          VS2.width+=0;
+        loadGame1()
+        }, 500)
+    }
+      </script>
+
+<!-------------------------------------------------------------------->
+
+
+
+
+
+<!-- <br> -->
+<div style="position: relative;display: flex; justify-content: center; align-items: center;">
+  
+  </div>
+
+</div>
+<script>
+    var teamsList = [];
+    let dropdownBlue = document.getElementById('blue-team');
+    let dropdownOrange = document.getElementById('orange-team');
+    let dropdown = document.getElementById('tier-dropdown');
+
+    var teamsList2 = [];
+    let dropdownBlue2 = document.getElementById('blue-team2');
+    let dropdownOrange2 = document.getElementById('orange-team2');
+    let dropdown2 = document.getElementById('tier-dropdown2');
+    
+dropdown.length = 0;
+dropdownBlue.length = 0;
+dropdownOrange.length = 0;
+
+dropdown2.length = 0;
+dropdownBlue2.length = 0;
+dropdownOrange2.length = 0;
+
+
+let defaultOption = document.createElement('option');
+defaultOption.text = 'Tier';
+
+let defaultOptionBlue = document.createElement('option');
+defaultOptionBlue.text = 'Blue Team';
+
+let defaultOptionOrange = document.createElement('option');
+defaultOptionOrange.text = 'Orange Team';
+
+dropdown.add(defaultOption);
+dropdown.selectedIndex = 0;
+
+dropdownBlue.add(defaultOptionBlue);
+dropdownBlue.selectedIndex = 0;
+
+dropdownOrange.add(defaultOptionOrange);
+dropdownOrange.selectedIndex = 0;
+
+let defaultOption2 = document.createElement('option');
+defaultOption2.text = 'Tier';
+
+let defaultOptionBlue2 = document.createElement('option');
+defaultOptionBlue2.text = 'Blue Team';
+
+let defaultOptionOrange2 = document.createElement('option');
+defaultOptionOrange2.text = 'Orange Team';
+
+dropdown2.add(defaultOption2);
+dropdown2.selectedIndex = 0;
+
+dropdownBlue2.add(defaultOptionBlue2);
+dropdownBlue2.selectedIndex = 0;
+
+dropdownOrange2.add(defaultOptionOrange2);
+dropdownOrange2.selectedIndex = 0;
+
+const url = 'https://cool-grass-d74d.rsc.workers.dev/?https://rsc.webfillet.com/RSCdotNet/api/stats/clear-cache';
+
+const request = new XMLHttpRequest();
+request.open('GET', url, true);
+
+request.onload = function() {
+  if (request.status === 200) {
+    const data = JSON.parse(request.responseText);
+    console.log(data)
+    teamsList.push(data)
+    teamsList2.push(data)
+    console.log(teamsList2)
+    let option;
+    for (let i = 0; i < data.length; i++) {
+      option = document.createElement('option');
+      option.text = data[i].TierName;
+      //option.value = data[i].abbreviation;
+      dropdown.add(option);
+      dropdown2.add(option)
+      
+    }
+    for (let i = 0; i < data.length; i++) {
+      option = document.createElement('option');
+      option.text = data[i].TierName;
+      //option.value = data[i].abbreviation;
+      dropdown.add(option);
+    }
+   } else {
+    // Reached the server, but it returned an error
+  }   
+}
+
+request.onerror = function() {
+  console.error('An error occurred fetching the JSON from ' + url);
+};
+
+request.send();
+
+function teams() {
+    var teams = [];
+    var id = [];
+    var tier = document.getElementById("tier-dropdown").value;
+    console.log(tier)
+    id.length = 0;
+    if(tier === "Premier"){
+        id.push(0)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][0]))
+    }else if(tier === "Master"){
+        id.push(1)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][1]))
+    }else if(tier === "Elite"){
+        id.push(2)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][2]))
+    }else if(tier === "Major"){
+        id.push(3)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][3]))
+    }else if(tier === "Minor"){
+        id.push(4)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][4]))
+    }else if(tier === "Challenger"){
+        id.push(5)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][5]))
+    }else if(tier === "Prospect"){
+        id.push(6)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][6]))
+    }else if(tier === "Contender"){
+        id.push(7)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][7]))
+    }else if(tier === "Amateur"){
+        id.push(8)
+        localStorage.setItem("Teams", JSON.stringify(teamsList[0][8]))
+    }
+
+//console.log(teamsList[0][0])
+    teams.length = 0;
+			teamsList[0][id].Teams.forEach(f => {
+    teams.push({team: f.TeamName, franchise: f.Franchise});
+    })
+    //console.log(teams)
+    let teamArray = [];
+    teamArray = []
+    //console.log(teamArray)
+    for (let i = 0; i < teams.length; i++) {
+        teamArray.push(
+        {"label": teams[i].team, "value": teams[i].franchise}
+        );if (i ===teams.length -1)
+
+teamArray.sort(function(a, b){
+    if(a.label < b.label) { return -1; }
+    if(a.label > b.label) { return 1; }
+    return 0;
+})
+
+
+ }
+ let option1 = []
+ option1 = []
+ let option = [];
+ option = [];
+ 
+ //document.getElementById("orange-team").options.length = 0;
+ let dropdownBlue = document.getElementById('blue-team');
+ let dropdownOrange = document.getElementById('orange-team');
+
+dropdownBlue.length = 0;
+dropdownOrange.length = 0;
+
+let defaultOptionBlue = document.createElement('option');
+defaultOptionBlue.text = 'Blue Team';
+
+let defaultOptionOrange = document.createElement('option');
+defaultOptionOrange.text = 'Orange Team';
+
+dropdownBlue.add(defaultOptionBlue);
+dropdownBlue.selectedIndex = 0;
+
+dropdownOrange.add(defaultOptionOrange);
+dropdownOrange.selectedIndex = 0;
+
+    for (let i = 0; i < teamArray.length; i++) {
+      option = document.createElement('option');
+      option.value = teamArray[i].value;
+      option.text = teamArray[i].label;
+      
+      
+      dropdownOrange.add(option);
+    }
+      for (let i = 0; i < teamArray.length; i++) {
+      option1 = document.createElement('option');
+      option1.text = teamArray[i].label;
+      option1.value = teamArray[i].value;
+      dropdownBlue.add(option1);
+      
+
+      
+    }
+}
+
+function teams2() {
+    var teams2 = [];
+    var id2 = [];
+    var tier2 = document.getElementById("tier-dropdown2").value;
+    console.log(tier2)
+    id2.length = 0;
+    if(tier2 === "Premier"){
+        id2.push(0)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][0]))
+    }else if(tier2 === "Master"){
+        id2.push(1)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][1]))
+    }else if(tier2 === "Elite"){
+        id2.push(2)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][2]))
+    }else if(tier2 === "Major"){
+        id2.push(3)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][3]))
+    }else if(tier2 === "Minor"){
+        id2.push(4)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][4]))
+    }else if(tier2 === "Challenger"){
+        id2.push(5)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][5]))
+    }else if(tier2 === "Prospect"){
+        id2.push(6)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][6]))
+    }else if(tier2 === "Contender"){
+        id2.push(7)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][7]))
+    }else if(tier2 === "Amateur"){
+        id2.push(8)
+        localStorage.setItem("Teams2", JSON.stringify(teamsList2[0][8]))
+    }
+
+//console.log(teamsList2[0][0])
+    teams2.length = 0;
+			teamsList2[0][id2].Teams.forEach(f => {
+    teams2.push({team: f.TeamName, franchise: f.Franchise});
+    })
+    console.log(teams2)
+    let teamArray2 = [];
+    teamArray2 = []
+    //console.log(teamArray)
+    for (let i = 0; i < teams2.length; i++) {
+        teamArray2.push(
+        {"label": teams2[i].team, "value": teams2[i].franchise}
+        );if (i ===teams2.length -1)
+
+teamArray2.sort(function(a, b){
+    if(a.label < b.label) { return -1; }
+    if(a.label > b.label) { return 1; }
+    return 0;
+})
+
+
+ }
+ let option12 = []
+ option12 = []
+ let option2 = [];
+ option2 = [];
+ 
+ //document.getElementById("orange-team").options.length = 0;
+ let dropdownBlue2 = document.getElementById('blue-team2');
+ let dropdownOrange2 = document.getElementById('orange-team2');
+
+dropdownBlue2.length = 0;
+dropdownOrange2.length = 0;
+
+let defaultOptionBlue2 = document.createElement('option');
+defaultOptionBlue2.text = 'Blue Team';
+
+let defaultOptionOrange2 = document.createElement('option');
+defaultOptionOrange2.text = 'Orange Team';
+
+dropdownBlue2.add(defaultOptionBlue2);
+dropdownBlue2.selectedIndex = 0;
+
+dropdownOrange2.add(defaultOptionOrange2);
+dropdownOrange2.selectedIndex = 0;
+
+    for (let i = 0; i < teamArray2.length; i++) {
+      option2 = document.createElement('option');
+      option2.value = teamArray2[i].value;
+      option2.text = teamArray2[i].label;
+      
+      
+      dropdownOrange2.add(option2);
+    }
+      for (let i = 0; i < teamArray2.length; i++) {
+      option12 = document.createElement('option');
+      option12.text = teamArray2[i].label;
+      option12.value = teamArray2[i].value;
+      dropdownBlue2.add(option12);
+      
+
+      
+    }
+}
+
+    </script>
+    
+<script>
+var mostWins = [4]
+var bluenum = parseInt(localStorage.getItem('BlueWins'))
+var blueW = [bluenum]
+console.log(blueW)
+function blueWin() {
+var getBlueWins = blueW[0] + 1
+blueW = []
+blueW.push(getBlueWins)
+document.getElementById("bWins").innerHTML = blueW[0]
+//localStorage.setItem("BlueWins", blueW[0]);
+var gameNum = parseInt(localStorage.getItem('GameNumber'), 10)
+var newGameNum = gameNum + 1
+console.log(newGameNum)
+//localStorage.setItem('GameNumber', newGameNum)
+document.getElementById("gameNumber").innerHTML = localStorage.getItem('GameNumber');
+if (blueW[0] === mostWins[0]) {
+  document.getElementById("BWButton").disabled = true;
+}else{
+  document.getElementById("BWButton").disabled = false;
+  document.getElementById("BRButton").disabled = false;
+}
+}
+
+function blueWinRemove() {
+var getBlueWins = blueW[0] - 1
+blueW = []
+blueW.push(getBlueWins)
+document.getElementById("bWins").innerHTML = blueW[0]
+//localStorage.setItem("BlueWins", blueW[0]);
+var gameNum = parseInt(localStorage.getItem('GameNumber'), 10)
+var newGameNum = gameNum - 1
+console.log(newGameNum)
+//localStorage.setItem('GameNumber', newGameNum)
+document.getElementById("gameNumber").innerHTML = localStorage.getItem('GameNumber');
+if (blueW[0] === 0) {
+  document.getElementById("BRButton").disabled = true;
+}else{
+  document.getElementById("BRButton").disabled = false;
+  document.getElementById("BWButton").disabled = false;
+}
+}
+
+var orangenum = parseInt(localStorage.getItem('OrangeWins'))
+var orangeW = [orangenum]
+function orangeWin() {
+  
+var getOrangeWins = orangeW[0] + 1
+orangeW = []
+orangeW.push(getOrangeWins)
+document.getElementById("oWins").innerHTML = orangeW[0]
+//localStorage.setItem("OrangeWins", orangeW[0]);
+var gameNum = parseInt(localStorage.getItem('GameNumber'), 10)
+var newGameNum = gameNum + 1
+
+//localStorage.setItem('GameNumber', newGameNum)
+//document.getElementById("gameNumber").innerHTML = newGameNum
+document.getElementById("gameNumber").innerHTML = localStorage.getItem('GameNumber');
+console.log(localStorage.getItem('GameNumber'))
+if (orangeW[0] === mostWins[0]) {
+  document.getElementById("OWButton").disabled = true;
+}else{
+  document.getElementById("OWButton").disabled = false;
+  document.getElementById("ORButton").disabled = false;
+}
+}
+
+function orangeWinRemove() {
+var getOrangeWins = orangeW[0] - 1
+orangeW = []
+orangeW.push(getOrangeWins)
+document.getElementById("oWins").innerHTML = orangeW[0]
+//localStorage.setItem("OrangeWins", orangeW[0]);
+var gameNum = parseInt(localStorage.getItem('GameNumber'), 10)
+var newGameNum = gameNum - 1
+//localStorage.setItem('GameNumber', newGameNum)
+document.getElementById("gameNumber").innerHTML = localStorage.getItem('GameNumber');
+console.log(newGameNum)
+
+if (orangeW[0] === 0) {
+  document.getElementById("ORButton").disabled = true;
+}else{
+  document.getElementById("ORButton").disabled = false;
+  document.getElementById("OWButton").disabled = false;
+}
+}
+var gamenum = parseInt(localStorage.getItem('GameNumber'))
+var game = [gamenum]
+function gameplus() {
+  var gamenum = parseInt(localStorage.getItem('GameNumber'))
+var game = [gamenum]
+var getGame = game[0] + 1
+game = []
+game.push(getGame)
+document.getElementById("gameNumber").innerHTML = game[0]
+localStorage.setItem("GameNumber", game[0]);
+if (game[0] === 7) {
+  document.getElementById("GamePlus").disabled = true;
+}else{
+  document.getElementById("GamePlus").disabled = false;
+  document.getElementById("GameMinus").disabled = false;
+}
+}
+
+function gameminus() {
+  var gamenum = parseInt(localStorage.getItem('GameNumber'))
+var game = [gamenum]
+var getGame = game[0] - 1
+game = []
+game.push(getGame)
+document.getElementById("gameNumber").innerHTML = game[0]
+localStorage.setItem("GameNumber", game[0]);
+if (game[0] === 1) {
+  document.getElementById("GameMinus").disabled = true;
+}else{
+  document.getElementById("GamePlus").disabled = false;
+  document.getElementById("GameMinus").disabled = false;
+}
+}
+function scores() {
+var blueSW = document.getElementById("bWins").innerHTML
+var orangeSW = document.getElementById("oWins").innerHTML
+localStorage.setItem("OrangeWins", orangeSW);
+localStorage.setItem("BlueWins", blueSW);
+console.log(orangeSW)
+var gamenum = parseInt(localStorage.getItem('GameNumber'))
+var game = [gamenum]
+var getGame = parseInt(orangeSW, 10) + parseInt(blueSW, 10) + 1
+game = []
+game.push(getGame)
+document.getElementById("gameNumber").innerHTML = game[0]
+localStorage.setItem("GameNumber", game[0]);
+
+}
+
+
+
+      function clearAll() {
+  
+  var sel = document.getElementById("blue-team");
+      var bt= sel.options[sel.selectedIndex].label;
+      var bf= sel.options[sel.selectedIndex].value;
+      //console.log(bf)
+      localStorage.setItem("BlueTeam", "Blue Team");
+      localStorage.setItem("BlueFran", "Blue Team");
+
+    
+    var sel1 = document.getElementById("orange-team");
+      var ot= sel1.options[sel1.selectedIndex].label;
+      var of= sel1.options[sel1.selectedIndex].value;
+      //console.log(of)
+      localStorage.setItem("OrangeTeam", "Orange Team");
+      localStorage.setItem("OrangeFran", "Orange Team");
+
+      localStorage.setItem("tier", "Tier");
+      localStorage.setItem("OrangeWins", parseInt('0')); 
+      localStorage.setItem("BlueWins", parseInt('0')); 
+      document.getElementById("gameNumber").innerHTML =  parseInt('1')
+      localStorage.setItem("GameNumber",  parseInt('1'));
+      orangeTeamName();
+      blueTeamName();
+      seriesKind()
+      document.getElementById("blueWins1").innerHTML = localStorage.getItem("BlueTeam") + " Wins";
+      document.getElementById("orangeWins1").innerHTML = localStorage.getItem("OrangeTeam") + " Wins";
+   
+      if (typeof(Storage) !== "undefined") {
+  document.getElementById("bWins").innerHTML = parseInt('0');
+  document.getElementById("oWins").innerHTML = parseInt('0');
+      }
+      window.location.assign('control.html')
+    }
+
+function seriesKind() {
+  var sel1 = document.getElementById("series-dropdown");
+        var series = sel1.options[sel1.selectedIndex].value;
+        if (series === "4GS") {
+          localStorage.setItem("series", document.getElementById("series-dropdown").value);
+        }else if (series === "BO7") {
+          localStorage.setItem("series", document.getElementById("series-dropdown").value);
+        }else if (series === "BO5") {
+          localStorage.setItem("series", document.getElementById("series-dropdown").value);
+        }else if (series === "BO3") {
+          localStorage.setItem("series", document.getElementById("series-dropdown").value);
+        }
+
+}
+
+function load() {
+  //document.getElementById("series-dropdown").value = localStorage.getItem('series');
+  
+
+  'use strict';
+        window.onstorage = event => { // same as window.addEventListener('storage', () => {
+        if (event.key != 'OrangeWins');
+        document.getElementById("oWins").innerHTML = localStorage.getItem("OrangeWins");
+         if (orangeW[0] === 0) {
+         document.getElementById("ORButton").disabled = true;
+        }else{
+         document.getElementById("ORButton").disabled = false;
+         document.getElementById("OWButton").disabled = false;
+        }
+        if (event.key != 'BlueWins');
+        document.getElementById("bWins").innerHTML = localStorage.getItem("BlueWins");
+          if (blueW[0] === 0) {
+          document.getElementById("BRButton").disabled = true;
+           }else{
+           document.getElementById("BRButton").disabled = false;
+           document.getElementById("BWButton").disabled = false;
+          }
+        if (event.key != 'GameNumber');
+        document.getElementById("gameNumber").innerHTML = localStorage.getItem("GameNumber")
+        }
+    
+        if (typeof(Storage) !== "undefined") {
+        
+        
+        }
+}
+    </script>
+ <script src="controlLogic.js"></script>
+ <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+ <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js'></script>
+</body>
