@@ -132,7 +132,7 @@ for (var i=0 ; i < teamData.Teams.length ; i++)
   }
 }
 //console.log(OrangeResults)
-
+try {
 if (BlueResults[0].Players.length < 4){
 var Blue1Name = BlueResults[0].Players[0].PlayerName
 var Blue2Name = BlueResults[0].Players[1].PlayerName
@@ -254,7 +254,9 @@ var OrangeGA = OrangeResults[0].OppGoals
 var OrangeSaves = OrangeResults[0].Saves
 var OrangeSA = OrangeResults[0].OppSaves
 var OrangeSP = OrangeResults[0].ShotPct
+} catch {
 
+}
 //-----------------------------------GAME 2 DATA-----------------------------------------------------------------//
 let Teams2 = localStorage.getItem("Teams2")
 let teamData2 = ('Teams2: ', JSON.parse(Teams2))
@@ -269,7 +271,7 @@ for (var i=0 ; i < teamData2.Teams.length ; i++)
     BlueResults2.push(teamData2.Teams[i])
   }
 }
-console.log(BlueResults2[0].Players[0])
+//console.log(BlueResults2[0].Players[0])
 
 var OrangeResults2 = []
 var searchFieldO2 = 'Franchise'
@@ -280,8 +282,8 @@ for (var i=0 ; i < teamData2.Teams.length ; i++)
     OrangeResults2.push(teamData2.Teams[i])
   }
 }
-console.log(OrangeResults2)
-
+//console.log(OrangeResults2)
+try {
 if (BlueResults2[0].Players.length < 4){
 var Blue1Name2 = BlueResults2[0].Players[0].PlayerName
 var Blue2Name2 = BlueResults2[0].Players[1].PlayerName
@@ -403,7 +405,9 @@ var OrangeGA2 = OrangeResults2[0].OppGoals
 var OrangeSaves2 = OrangeResults2[0].Saves
 var OrangeSA2 = OrangeResults2[0].OppSaves
 var OrangeSP2 = OrangeResults2[0].ShotPct
+} catch {
 
+}
 //---------------------------------------------------------------------------------------------------------------//
 setTimeout(()=>{
           
@@ -487,81 +491,7 @@ setTimeout(()=>{
     ctx.fillText(localStorage.getItem("OrangeTeam"), 1266, 1011)
     }
     catch{
-      var c = document.getElementById("myCanvas");
-    var ctx = c.getContext("2d");
-    var Blue = document.getElementById("blueLogo");
-    var Orange = document.getElementById("orangeLogo");
-    var Background = document.getElementById("background");
-    ctx.drawImage(Background, 0, 0, 1920, 1080)
-    ctx.font = "40px Verdana";
-    ctx.fillStyle = "#f5f5f5";
-    ctx.fillText("Blue1Name", 730, 184)
-    ctx.fillText("Blue2Name", 730, 277)
-    ctx.fillText("Blue3Name", 730, 369)
-    ctx.fillText("Blue4Name", 730, 462)
-    ctx.fillText("Orange1Name", 55, 723)
-    ctx.fillText("Orange2Name", 55, 816)
-    ctx.fillText("Orange3Name", 55, 909)
-    ctx.fillText("Orange4Name", 55, 1002)
-    ctx.textAlign = 'center';
-    ctx.fillText("Blue1GP", 1235, 184)
-    ctx.fillText("Blue2GP", 1235, 277)
-    ctx.fillText("Blue3GP", 1235, 369)
-    ctx.fillText("Blue4GP", 1235, 462)
-    ctx.fillText("Orange1GP", 570, 723)
-    ctx.fillText("Orange2GP", 570, 816)
-    ctx.fillText("Orange3GP", 570, 909)
-    ctx.fillText("Orange4GP", 570, 1002)
-    ctx.fillText("Blue1Goals", 1358, 184)
-    ctx.fillText("Blue2Goals", 1358, 277)
-    ctx.fillText("Blue3Goals", 1358, 369)
-    ctx.fillText("Blue4Goals", 1358, 462)
-    ctx.fillText("Orange1Goals", 693, 723)
-    ctx.fillText("Orange2Goals", 693, 816)
-    ctx.fillText("Orange3Goals", 693, 909)
-    ctx.fillText("Orange4Goals", 693, 1002)
-    ctx.fillText("Blue1Assists", 1518, 184)
-    ctx.fillText("Blue2Assists", 1518, 277)
-    ctx.fillText("Blue3Assists", 1518, 369)
-    ctx.fillText("Blue4Assists", 1518, 462)
-    ctx.fillText("Orange1Assists", 853, 723)
-    ctx.fillText("Orange2Assists", 853, 816)
-    ctx.fillText("Orange3Assists", 853, 909)
-    ctx.fillText("Orange4Assists", 853, 1002)
-    ctx.fillText("Blue1Saves", 1676, 184)
-    ctx.fillText("Blue2Saves", 1676, 277)
-    ctx.fillText("Blue3Saves", 1676, 369)
-    ctx.fillText("Blue4Saves", 1676, 462)
-    ctx.fillText("Orange1Saves", 1011, 723)
-    ctx.fillText("Orange2Saves", 1011, 816)
-    ctx.fillText("Orange3Saves", 1011, 909)
-    ctx.fillText("Orange4Saves", 1011, 1002)
-    ctx.fillText("Blue1ShotPct", 1824, 184)
-    ctx.fillText("Blue2ShotPct", 1824, 277)
-    ctx.fillText("Blue3ShotPct", 1824, 369)
-    ctx.fillText("Blue4ShotPct", 1824, 462)
-    ctx.fillText("Orange1ShotPct", 1159, 723)
-    ctx.fillText("Orange2ShotPct", 1159, 816)
-    ctx.fillText("Orange3ShotPct", 1159, 909)
-    ctx.fillText("Orange4ShotPct", 1159, 1002)
-    ctx.font = "italic 35px Verdana";
-    ctx.fillStyle = "#f5f5f5";
-    ctx.textAlign = "right";
-    ctx.shadowColor="black";
-    ctx.shadowBlur=20;
-    ctx.shadowOffsetX = 5;
-    ctx.shadowOffsetY = 5;
-    ctx.drawImage(Blue, 330, 35, 325, 325)
-    ctx.drawImage(Orange, 1270, 580, 325, 325)
-    ctx.fillText(localStorage.getItem("BlueFran"), 650, 517)
-    ctx.textAlign = "left"
-    ctx.fillText(localStorage.getItem("OrangeFran"), 1266, 1058)
-    ctx.font = "italic bold 55px Verdana";
-    ctx.fillStyle = "#f5f5f5";
-    ctx.textAlign = "right";
-    ctx.fillText(localStorage.getItem("BlueTeam"), 650, 470)
-    ctx.textAlign = "left"
-    ctx.fillText(localStorage.getItem("OrangeTeam"), 1266, 1011)
+      
     }
 
 //------------------------------------------------PLAYER STATS GAME 2------------------------------------------------//
@@ -643,84 +573,11 @@ try {
     ptx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 1011)
     }
     catch{
-      var p = document.getElementById("myCanvas2");
-    var ptx = p.getContext("2d");
-    var Blue = document.getElementById("blueLogo2");
-    var Orange = document.getElementById("orangeLogo2");
-    var Background = document.getElementById("background");
-    ptx.drawImage(Background, 0, 0, 1920, 1080)
-    ptx.font = "40px Verdana";
-    ptx.fillStyle = "#f5f5f5";
-    ptx.fillText("Blue1Name", 730, 184)
-    ptx.fillText("Blue2Name", 730, 277)
-    ptx.fillText("Blue3Name", 730, 369)
-    ptx.fillText("Blue4Name", 730, 462)
-    ptx.fillText("Orange1Name", 55, 723)
-    ptx.fillText("Orange2Name", 55, 816)
-    ptx.fillText("Orange3Name", 55, 909)
-    ptx.fillText("Orange4Name", 55, 1002)
-    ptx.textAlign = 'center';
-    ptx.fillText("Blue1GP", 1235, 184)
-    ptx.fillText("Blue2GP", 1235, 277)
-    ptx.fillText("Blue3GP", 1235, 369)
-    ptx.fillText("Blue4GP", 1235, 462)
-    ptx.fillText("Orange1GP", 570, 723)
-    ptx.fillText("Orange2GP", 570, 816)
-    ptx.fillText("Orange3GP", 570, 909)
-    ptx.fillText("Orange4GP", 570, 1002)
-    ptx.fillText("Blue1Goals", 1358, 184)
-    ptx.fillText("Blue2Goals", 1358, 277)
-    ptx.fillText("Blue3Goals", 1358, 369)
-    ptx.fillText("Blue4Goals", 1358, 462)
-    ptx.fillText("Orange1Goals", 693, 723)
-    ptx.fillText("Orange2Goals", 693, 816)
-    ptx.fillText("Orange3Goals", 693, 909)
-    ptx.fillText("Orange4Goals", 693, 1002)
-    ptx.fillText("Blue1Assists", 1518, 184)
-    ptx.fillText("Blue2Assists", 1518, 277)
-    ptx.fillText("Blue3Assists", 1518, 369)
-    ptx.fillText("Blue4Assists", 1518, 462)
-    ptx.fillText("Orange1Assists", 853, 723)
-    ptx.fillText("Orange2Assists", 853, 816)
-    ptx.fillText("Orange3Assists", 853, 909)
-    ptx.fillText("Orange4Assists", 853, 1002)
-    ptx.fillText("Blue1Saves", 1676, 184)
-    ptx.fillText("Blue2Saves", 1676, 277)
-    ptx.fillText("Blue3Saves", 1676, 369)
-    ptx.fillText("Blue4Saves", 1676, 462)
-    ptx.fillText("Orange1Saves", 1011, 723)
-    ptx.fillText("Orange2Saves", 1011, 816)
-    ptx.fillText("Orange3Saves", 1011, 909)
-    ptx.fillText("Orange4Saves", 1011, 1002)
-    ptx.fillText("Blue1ShotPct", 1824, 184)
-    ptx.fillText("Blue2ShotPct", 1824, 277)
-    ptx.fillText("Blue3ShotPct", 1824, 369)
-    ptx.fillText("Blue4ShotPct", 1824, 462)
-    ptx.fillText("Orange1ShotPct", 1159, 723)
-    ptx.fillText("Orange2ShotPct", 1159, 816)
-    ptx.fillText("Orange3ShotPct", 1159, 909)
-    ptx.fillText("Orange4ShotPct", 1159, 1002)
-    ptx.font = "italic 35px Verdana";
-    ptx.fillStyle = "#f5f5f5";
-    ptx.textAlign = "right";
-    ptx.shadowColor="black";
-    ptx.shadowBlur=20;
-    ptx.shadowOffsetX = 5;
-    ptx.shadowOffsetY = 5;
-    ptx.drawImage(Blue, 330, 35, 325, 325)
-    ptx.drawImage(Orange, 1270, 580, 325, 325)
-    ptx.fillText(localStorage.getItem("BlueFran2"), 650, 517)
-    ptx.textAlign = "left"
-    ptx.fillText(localStorage.getItem("OrangeFran2"), 1266, 1058)
-    ptx.font = "italic bold 55px Verdana";
-    ptx.fillStyle = "#f5f5f5";
-    ptx.textAlign = "right";
-    ptx.fillText(localStorage.getItem("BlueTeam2"), 650, 470)
-    ptx.textAlign = "left"
-    ptx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 1011)
+      
     } 
 //------------------------------------------------TEAM STATS GAME 1-------------------------------------------------//
-        var t = document.getElementById("TeamImage1");
+try{        
+var t = document.getElementById("TeamImage1");
         var titx = t.getContext("2d");
         var Blue = document.getElementById("blueLogo");
         var Orange = document.getElementById("orangeLogo");
@@ -761,8 +618,12 @@ try {
         titx.fillText(localStorage.getItem("BlueTeam"), 650, 800)
         titx.textAlign = "left"
         titx.fillText(localStorage.getItem("OrangeTeam"), 1266, 800)
+} catch{
+
+}
 
         //------------------------------------------------TEAM STATS GAME 2-------------------------------------------------//
+       try {
         var t2 = document.getElementById("TeamImage2");
         var ti2tx = t2.getContext("2d");
         var Blue2 = document.getElementById("blueLogo2");
@@ -804,8 +665,12 @@ try {
         ti2tx.fillText(localStorage.getItem("BlueTeam2"), 650, 800)
         ti2tx.textAlign = "left"
         ti2tx.fillText(localStorage.getItem("OrangeTeam2"), 1266, 800)
+       }catch{
+
+       }
 
 //-----------------------------------------VS GAME 1---------------------------------------------------------//
+try{
         var v = document.getElementById("VS1");
         var vs1tx = v.getContext("2d");
         var Blue = document.getElementById("blueLogo");
@@ -832,8 +697,12 @@ try {
         vs1tx.fillText(localStorage.getItem("BlueTeam"), 412, 1005)
         vs1tx.textAlign = "center"
         vs1tx.fillText(localStorage.getItem("OrangeTeam"), 1485, 1005)
+}catch{
 
-//------------------------------------------------VS GAME 2-----------------------------------------------------------------//        
+}
+
+//------------------------------------------------VS GAME 2-----------------------------------------------------------------// 
+try{       
         var v2 = document.getElementById("VS2");
         var vs2tx = v2.getContext("2d");
         var Blue2 = document.getElementById("blueLogo2");
@@ -862,6 +731,9 @@ try {
         vs2tx.fillText(localStorage.getItem("BlueTeam2"), 412, 1005)
         vs2tx.textAlign = "center"
         vs2tx.fillText(localStorage.getItem("OrangeTeam2"), 1485, 1005)
+}catch{
+  
+}
   }, 500) 
 
       }
@@ -989,7 +861,7 @@ dropdownBlue2.selectedIndex = 0;
 dropdownOrange2.add(defaultOptionOrange2);
 dropdownOrange2.selectedIndex = 0;
 
-const url = 'https://cool-grass-d74d.rsc.workers.dev/?https://rsc.webfillet.com/RSCdotNet/api/stats/clear-cache';
+const url = 'https://cool-grass-d74d.rsc.workers.dev/?https://rsc.webfillet.com/RSCdotNet/api/stats';
 
 const request = new XMLHttpRequest();
 request.open('GET', url, true);
