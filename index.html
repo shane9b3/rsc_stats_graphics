@@ -805,7 +805,30 @@ try{
   </div>
 
 </div>
+<script async>
+   //------------------------BALLCHASING TEST---------------------------//
+   var myHeaders = {
+    'Content-type': 'application/json',
+    'Authorization': 'OeXDGYF0Gj6khu55bTZXfmzFda4ScVctq1OrfDT2'
+}
+
+fetch('https://cors-anywhere.herokuapp.com/https://ballchasing.com/api/groups/season-x-d2f4kfffzc', {
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'OeXDGYF0Gj6khu55bTZXfmzFda4ScVctq1OrfDT2',
+  },
+  
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+
+  
+  //-------------------------------------------------------------------//
+</script>
 <script>
+
+ 
     var teamsList = [];
     let dropdownBlue = document.getElementById('blue-team');
     let dropdownOrange = document.getElementById('orange-team');
@@ -869,10 +892,10 @@ request.open('GET', url, true);
 request.onload = function() {
   if (request.status === 200) {
     const data = JSON.parse(request.responseText);
-    console.log(data)
+    //console.log(data)
     teamsList.push(data)
     teamsList2.push(data)
-    console.log(teamsList2)
+    //console.log(teamsList2)
     let option;
     for (let i = 0; i < data.length; i++) {
       option = document.createElement('option');
@@ -1105,7 +1128,7 @@ dropdownOrange2.selectedIndex = 0;
 var mostWins = [4]
 var bluenum = parseInt(localStorage.getItem('BlueWins'))
 var blueW = [bluenum]
-console.log(blueW)
+//console.log(blueW)
 function blueWin() {
 var getBlueWins = blueW[0] + 1
 blueW = []
