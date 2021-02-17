@@ -1,8 +1,8 @@
+
 body{
-  width: 1300px;
-  /*height: 100px;*/
+padding-left: 20px;
   background-color: #272627; 
-  color: white;
+  color: #818181;;
   /* background-image: url('assets/logos/rsc.png'); */
 }
 .center {
@@ -10,12 +10,102 @@ body{
   width: 100%;
   
 }
-.column {
-  float: left;
-  width: 50%;
-  padding: 5px;
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(204,43,94);
+  background: linear-gradient(90deg, rgba(204,43,94,1) 0%, rgba(117,58,136,1) 100%);
 }
 
+.card1 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(20,136,204);
+  background: linear-gradient(90deg, rgba(20,136,204,1) 0%, rgba(43,50,178,1) 100%);
+}
+
+.card2 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(255,95,109);
+  background: linear-gradient(90deg, rgba(255,95,109,1) 0%, rgba(255,195,113,1) 100%);
+}
+
+.card3 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(15,32,39);
+  background: linear-gradient(90deg, rgba(15,32,39,1) 0%, rgba(32,58,67,1) 50%, rgba(44,83,100,1) 100%);
+}
+
+.card4 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(254,140,0);
+  background: linear-gradient(90deg, rgba(254,140,0,1) 0%, rgba(248,54,0,1) 100%);
+}
+
+.card5 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(187,210,197);
+  background: linear-gradient(270deg, rgba(187,210,197,1) 0%, rgba(83,105,118,1) 100%);
+}
+
+.card6 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(100,65,165);
+  background: linear-gradient(90deg, rgba(100,65,165,1) 0%, rgba(42,8,69,1) 100%);
+}
+
+.card7 {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 0px;
+  border-radius: 3px;
+  padding: 16px;
+  width: 250px;
+  margin: 10px;
+  text-align: center;
+  background: rgb(17,153,142);
+  background: linear-gradient(90deg, rgba(17,153,142,1) 0%, rgba(56,239,125,1) 100%);
+}
 /* Clear floats after image containers */
 .row::after {
   content: "";
@@ -68,12 +158,13 @@ body{
   background-color: #111;
   overflow-x: hidden;
   padding-top: 110px;
+
 }
 /* Style the sidenav links and the dropdown button */
 .sidenav a, .dropdown-btn, .div {
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 14px;
   color: #818181;
   display: block;
   border: none;
@@ -84,16 +175,19 @@ body{
   outline: none;
 }
 
-/* On mouse-over */
+/* On mouse-over 
 .sidenav a:hover, .dropdown-btn:hover{
   color: #f1f1f1;
 }
-
+*/
+.input {
+  color:whitesmoke;
+}
 .button {
   width: 200px;
   padding: 6px 8px 6px 16px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 14px;
   color: #818181;
   display: block;
   border: none;
@@ -107,14 +201,14 @@ body{
 /* Main content */
 .main {
   margin-left: 200px; /* Same as the width of the sidenav */
-  font-size: 20px; /* Increased text to enable scrolling */
+  font-size: 14px; /* Increased text to enable scrolling */
   padding: 10px 10px;
 }
 
 /* Add an active class to the active dropdown button */
 .active {
   background-color: green;
-  color: white;
+  /*color: white;*/
 }
 
 /* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
@@ -133,7 +227,7 @@ body{
 /* Some media queries for responsiveness */
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+  .sidenav a {font-size: 14px;}
 }
 .rsc {
   position: absolute;

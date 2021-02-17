@@ -47,7 +47,7 @@
 <!-------------------------------------------------------------------->
 
 <div class="row center">
-  <div class="column">
+  <div class="column" style="padding-left: 10px;">
     <canvas id="VS1" width="1920" height="1080">
     </canvas>
     <br></br>
@@ -57,7 +57,7 @@
     <canvas id="TeamImage1" width="1920" height="1080">
     </canvas>
   </div>
-  <div class="column">
+  <div class="column" style="padding-left: 20px;">
     <canvas id="VS2" width="1920" height="1080">
     </canvas>
     <br></br>
@@ -892,7 +892,7 @@ request.open('GET', url, true);
 request.onload = function() {
   if (request.status === 200) {
     const data = JSON.parse(request.responseText);
-    //console.log(data)
+    console.log(data)
     teamsList.push(data)
     teamsList2.push(data)
     //console.log(teamsList2)
